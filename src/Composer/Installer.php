@@ -100,19 +100,21 @@ class Installer
      */
     protected $autoloadGenerator;
 
-    protected $preferSource = false;
-    protected $preferDist = false;
-    protected $optimizeAutoloader = false;
+    protected $preferSource          = false;
+    protected $preferDist            = false;
+    protected $optimizeAutoloader    = false;
     protected $classMapAuthoritative = false;
-    protected $devMode = false;
-    protected $dryRun = false;
-    protected $verbose = false;
-    protected $update = false;
-    protected $dumpAutoloader = true;
-    protected $runScripts = true;
-    protected $ignorePlatformReqs = false;
-    protected $preferStable = false;
-    protected $preferLowest = false;
+    protected $devMode               = false;
+    protected $dryRun                = false;
+    protected $verbose               = false;
+    protected $update                = false;
+    protected $dumpAutoloader        = true;
+    protected $runScripts            = true;
+    protected $ignorePlatformReqs    = false;
+    protected $preferStable          = false;
+    protected $preferLowest          = false;
+    protected $dumpLock              = false;
+
     /**
      * Array of package names/globs flagged for update
      *
@@ -277,7 +279,7 @@ class Installer
             );
         }
 
-        if (!$this->dryRun) {
+        if (!$this->dryRun || $this->dumpLock) {
             // write lock
             if ($this->update || !$this->locker->isLocked()) {
                 $localRepo->reload();
@@ -1516,6 +1518,18 @@ class Installer
     public function disablePlugins()
     {
         $this->installationManager->disablePlugins();
+
+        return $this;
+    }
+
+    /**
+     * Forces the update of composer.lock
+     * @param boolean $dumpLock
+     * @return $this
+     */
+    public function setDumpLock($dumpLock)
+    {
+        $this->dumpLock = $dumpLock;
 
         return $this;
     }
